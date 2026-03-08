@@ -1,4 +1,4 @@
-POP
+🧠 POP
 
 POP is not really a programming language — it is a programming dialect.
 
@@ -6,68 +6,72 @@ Instead of writing code directly, developers describe functions and data structu
 
 The idea is to treat software development more like specification writing and less like manual code authoring.
 
-Core Idea
+💡 Core Idea
 
 A POP program is simply an array of natural language paragraphs.
 
 Each paragraph describes either:
 
-a data structure
-
-a function
+🔹 a data structure
+🔹 a function
 
 The POP compiler processes these descriptions and produces code implementing them.
 
-Example description:
-
+Example description
 "a node is a structure that holds a value and a reference to the next node (might be null)"
 
 From this, POP generates the appropriate structure in the chosen language.
 
-Architecture
+⚙️ Architecture
 
 The POP compiler works in three stages.
 
-1. Naming
+Natural Language
+       │
+       ▼
+   🏷 Naming
+       │
+       ▼
+   ✍ Signature
+       │
+       ▼
+   🧩 Implementation
+       │
+       ▼
+   Generated Code
+🏷 1. Naming
 
 The compiler first analyzes each paragraph to determine:
 
-whether it describes a function or data structure
-
-the canonical technical name
-
-possible variations and synonyms
+✔ whether it describes a function or data structure
+✔ the canonical technical name
+✔ possible variations and synonyms
 
 This step helps the compiler understand how different descriptions might refer to the same concept.
 
-Output example:
-
+Example naming output
 linked list
 linkedList
 list head structure
 chain list
-2. Signature Generation
+✍ 2. Signature Generation
 
 Next, POP generates a language-valid signature for the function or structure.
 
 This includes:
 
-parameters
-
-return types (or type hints)
-
-references to previously defined objects
+• parameters
+• return types (or type hints)
+• references to previously defined objects
 
 The compiler also builds a dictionary mapping natural language terms to technical names.
 
-3. Code Generation
+🧩 3. Code Generation
 
 Finally, POP generates the implementation for the described object using:
 
-the signature
+• the generated signature
+• the object dictionary
+• previously defined structures and functions
 
-the object dictionary
-
-previously defined structures/functions
-
-The output is valid code in the chosen language.
+The output is valid code in the target programming language.
