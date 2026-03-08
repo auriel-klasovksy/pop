@@ -39,6 +39,8 @@ Natural Language
        │
        ▼
    Generated Code
+
+   
 🏷 1. Naming
 
 The compiler first analyzes each paragraph to determine:
@@ -54,6 +56,8 @@ linked list
 linkedList
 list head structure
 chain list
+
+
 ✍ 2. Signature Generation
 
 Next, POP generates a language-valid signature for the function or structure.
@@ -65,6 +69,7 @@ This includes:
 • references to previously defined objects
 
 The compiler also builds a dictionary mapping natural language terms to technical names.
+
 
 🧩 3. Code Generation
 
