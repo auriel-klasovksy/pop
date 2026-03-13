@@ -25,21 +25,9 @@ From this, POP generates the appropriate structure in the chosen language.
 
 ⚙️ Architecture
 
-The POP compiler works in three stages.
+The POP compiler works in three stages to turn natural language into code. .
 
-Natural Language
-       ▼
-       
-   🏷 Naming
-       ▼
-       
-   ✍ Signature
-       ▼
-       
-   🧩 Implementation
-       ▼
-       
-   Generated Code
+🏷 Naming, ✍ Signature, 🧩 Implementation
 
    
 🏷 1. Naming
