@@ -13,6 +13,7 @@ A POP program is simply an array of natural language paragraphs.
 Each paragraph describes either:
 
 🔹 a data structure
+
 🔹 a function
 
 The POP compiler processes these descriptions and produces code implementing them.
@@ -27,17 +28,21 @@ From this, POP generates the appropriate structure in the chosen language.
 The POP compiler works in three stages.
 
 Natural Language
-       │
+
        ▼
+       
    🏷 Naming
-       │
+   
        ▼
+       
    ✍ Signature
-       │
+       
        ▼
+       
    🧩 Implementation
-       │
+       
        ▼
+       
    Generated Code
 
    
@@ -46,15 +51,21 @@ Natural Language
 The compiler first analyzes each paragraph to determine:
 
 ✔ whether it describes a function or data structure
+
 ✔ the canonical technical name
+
 ✔ possible variations and synonyms
 
 This step helps the compiler understand how different descriptions might refer to the same concept.
 
 Example naming output
+
 linked list
+
 linkedList
+
 list head structure
+
 chain list
 
 
@@ -65,7 +76,9 @@ Next, POP generates a language-valid signature for the function or structure.
 This includes:
 
 • parameters
+
 • return types (or type hints)
+
 • references to previously defined objects
 
 The compiler also builds a dictionary mapping natural language terms to technical names.
@@ -76,7 +89,9 @@ The compiler also builds a dictionary mapping natural language terms to technica
 Finally, POP generates the implementation for the described object using:
 
 • the generated signature
+
 • the object dictionary
+
 • previously defined structures and functions
 
 The output is valid code in the target programming language.
