@@ -1,0 +1,50 @@
+[modifier]
+
+Target output is a React component written in TypeScript.
+
+[modifier]
+
+The component receives all data and event handlers through props. It does not store todos internally and does not perform persistence.
+
+[modifier]
+
+Use plain semantic HTML elements and CSS class names only. Do not use inline styles, CSS-in-JS, component libraries, icon libraries, animation libraries, or utility CSS frameworks.
+
+[type Todo]
+
+A todo item with an id string, title string, completion status boolean, and creation date string in ISO 8601 format.
+
+[type Todo Filter]
+
+A filter value that is one of: all, active, completed.
+
+[type Todo List CSS Classes]
+
+Use "todo-list" for the container.
+Use "todo-row" for each todo row.
+Use "completed" for completed todo rows.
+Use "selected" for the selected filter button.
+
+[function Filter Todos]
+
+Given an array of Todo values and a Todo Filter, return the todos matching the filter.
+The all filter returns every todo.
+The active filter returns todos whose completion status is false.
+The completed filter returns todos whose completion status is true.
+
+[function Sort Todos]
+
+Given an array of Todo values, return a new array sorted by creation date descending.
+Do not mutate the original array.
+
+[function Todo List Component]
+
+Render a React component that receives todos, selected filter, on filter change, and on todo completion toggle through props.
+First Sort Todos, then Filter Todos.
+Render a heading with text "Todos".
+Render one filter button for each Todo Filter value.
+Render one row per visible todo.
+Each row shows a checkbox bound to the todo completion status and a text label containing the todo title.
+Use Todo List CSS Classes for styling hooks.
+When a checkbox changes, call the completion toggle handler with the todo id and the new completion status.
+If no todos are visible, display "No todos to show."
