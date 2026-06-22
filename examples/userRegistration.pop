@@ -1,0 +1,39 @@
+[type Registration Request]
+
+A registration request containing an email address and password.
+
+[type User]
+
+A registered user with an email address, password hash, creation date, and active status.
+
+[function Validate Registration Request]
+
+Verify that the email address is syntactically valid.
+
+Verify that the password contains at least twelve characters.
+
+Return a descriptive validation error if either check fails.
+
+[function Hash Password]
+
+Generate a secure password hash from a plain text password.
+
+The original password must not appear in the returned value.
+
+[function Create User]
+
+Create and return a User from a validated Registration Request.
+
+Use Hash Password for password storage.
+
+Set the creation date to the current time.
+
+Set the active status to true.
+
+[function Register User]
+
+Validate Registration Request.
+
+If validation fails, return the validation error.
+
+Otherwise Create User and return the created user.
