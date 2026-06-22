@@ -1,0 +1,15 @@
+Intent and implementation should be separated.
+
+Intent is a nicer material to work with than implementation. It is easier to understand, easier to expand, easier to change, and easier to discard.
+
+Intent is written directly as code. Implementation is derived from it.
+
+An idea is stable when different people understand it the same way. A specification is stable when different implementations preserve the same meaning.
+
+Humans and machines both reason better about complete things.
+
+Instead of complaining about syntax, the compiler should complain about missing ideas or unclear meaning.
+
+Software is a collaboration between the programmer and their compiler.
+
+Programming is a communication of intent. 
