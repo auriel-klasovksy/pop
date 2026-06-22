@@ -1,0 +1,226 @@
+POP Language Specification v1
+Introduction
+POP (Prompt-Oriented Programming) is a structured natural-language specification language that compiles into source code.
+Rather than directly expressing implementation details in a programming language, POP allows programmers to describe the structure, behavior, constraints, and relationships of a system in human-readable form. A POP compiler generates executable source code from this specification.
+POP is designed around the assumption that modern AI systems are capable of producing high-quality implementations when given sufficient structure and guidance. The purpose of POP is not to eliminate interpretation, but to constrain and direct it.
+The primary output of a POP document is source code in a target programming language.
+
+───
+
+Core Principles
+Explicit Structure, Inferred Implementation
+Program structure should be explicit.
+Implementation details may be inferred when they do not materially affect correctness or intended behavior.
+Stability Over Determinism
+POP does not require deterministic compilation.
+Instead, POP evaluates and reports the stability of a specification.
+Stable specifications should produce materially equivalent implementations across reasonable compilations.
+Refusal of Critical Ambiguity
+Compilers should avoid making decisions that materially affect correctness, safety, architecture, or observable behavior without sufficient guidance.
+Insufficiently specified requirements should generate findings and may be rejected according to compilation policy.
+Human Readability First
+POP documents are primarily human-readable design artifacts.
+Compiler convenience should not take precedence over readability and maintainability.
+
+───
+
+Documents
+A POP document consists of paragraphs.
+Each paragraph defines exactly one entity.
+Except for Actions, paragraph order has no semantic meaning.
+
+───
+
+Entity Model
+Entities are the core structural units of POP.
+Each entity has a kind.
+POP v1 defines five entity kinds:
+• Function
+• Type
+• Import
+• Modifier
+• Action
+Entity kinds should be declared explicitly.
+
+───
+
+Naming
+Functions and Types require explicit names.
+Entity names must be unique within a document's visible scope.
+Documents may not contain multiple visible entities with the same name.
+Shadowing is not supported.
+Imports do not override local entities.
+Local entities do not override imported entities.
+Name conflicts must be resolved explicitly.
+
+───
+
+Functions
+Functions describe reusable behavior.
+Functions may reference other entities by name.
+Function specifications should provide enough information to allow reliable implementation.
+Example:
+[function Register User]
+Validate the registration request, hash the password, and store the user record.
+
+───
+
+Types
+Types describe the structure and meaning of data.
+Types may reference other Types.
+The generated representation is target-language dependent.
+Example:
+[type User]
+A registered customer with an email address, password hash, and account status.
+
+───
+
+Imports
+Imports expose entities from another POP document.
+Imported entities retain their original internal references and context.
+References inside imported entities continue to resolve against the imported document.
+Imports may expose all entities from a document or a selected subset.
+
+───
+
+Modifiers
+Modifiers define document-wide constraints.
+Modifiers may influence:
+• interpretation
+• interfaces
+• implementation strategies
+• validation requirements
+• coding conventions
+• architectural constraints
+Modifiers may establish assumptions about the target runtime, frameworks, libraries, deployment environment, or other capabilities available during generation.
+Modifiers apply to the entire document.
+POP v1 does not support scoped modifiers.
+Example:
+[modifier]
+All file operations are asynchronous.
+Example:
+[modifier]
+Use the OpenAI SDK for chat completion requests.
+
+───
+
+Actions
+Actions describe executable runtime behavior.
+Actions are emitted in document order.
+Multiple Actions are allowed.
+Actions are not intended to be reusable entities.
+Actions do not share implicit local variables or execution context.
+Example:
+[action]
+Start the web server and begin listening for requests.
+
+───
+
+References
+References are name-based.
+A reference is valid when its intended target can be identified unambiguously by a competent programmer reading the document.
+Compilers should resolve references conservatively.
+Unclear references should generate findings.
+
+───
+
+External Context
+POP entities may reference:
+• files
+• environment variables
+• compiler-provided configuration
+• other external artifacts
+External artifacts are not POP entities.
+POP v1 does not define variables, resources, or asset entities.
+The compiler is responsible for validating external references.
+
+───
+
+Stability
+Stability is a first-class language concept.
+Stability measures how consistently a specification is likely to be interpreted by competent programmers and compliant compilers.
+Examples:
+Low stability:
+"Sort users."
+Higher stability:
+"Sort users by creation date ascending."
+Very high stability:
+"Sort users by creation date ascending using merge sort."
+Stability is a property of the specification, not of any particular implementation.
+
+───
+
+Findings
+Compilers analyze POP documents and produce findings.
+Examples include:
+• contradictory definitions
+• ambiguous references
+• missing requirements
+• instability risks
+• unresolved external references
+• architectural concerns
+Findings should be descriptive and actionable.
+Compilers are encouraged to explain why a finding was generated and suggest improvements.
+Findings are not required to be exhaustive.
+
+───
+
+Compilation Policy
+Compilation policy determines how findings affect compilation.
+Policies may:
+• reject
+• warn
+• note
+• ignore
+The same POP document may be accepted under one policy and rejected under another.
+
+───
+
+Relationship to AI Software Generation
+POP may be used alongside AI-assisted software generation systems.
+POP provides a human-readable and reviewable representation of software structure and intent.
+AI systems may generate POP documents, refine POP documents, or compile POP documents into code.
+Because POP documents are plain-text specifications, they integrate naturally with version control, code review, and peer review workflows. Changes can be reviewed at the specification level before generated code is inspected.
+POP does not prescribe any particular software development workflow.
+
+───
+
+Appendix A - Examples
+Hello World
+[action]
+Display "Hello World".
+
+───
+
+User Greeting
+[type User]
+A user with a name.
+[function Greet User]
+Display "Hello" followed by the user's name.
+[action]
+Create a user named World and Greet User.
+
+───
+
+Function Composition
+[function Validate User]
+Ensure the user has a non-empty name and a valid email address.
+[function Register User]
+Validate User and store the user in the database.
+This example demonstrates how Functions may reference other Functions by name.
+
+───
+
+Explicitly Deferred
+The following topics are intentionally outside the scope of POP v1:
+• private entities
+• entity aliases
+• scoped modifiers
+• resource entities
+• variables
+• deterministic compilation guarantees
+• stability scoring systems
+• compiler interoperability standards
+• formal verification
+• optimization directives
+These may be introduced in future revisions.
