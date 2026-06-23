@@ -4,81 +4,109 @@ Purpose
 
 This skill teaches an AI system how to transform requirements into high-quality POP specifications.
 
-The goal is not to generate code.
+This skill assumes knowledge of the POP language.
 
-The goal is not to generate implementation details.
+The goal is not to generate code.
 
 The goal is to produce a stable, complete, human-readable POP specification that accurately communicates intent.
 
-A good POP document should be understandable by both humans and compilers. It should expose the important concepts of a system, hide unnecessary implementation details, and make future modification easy.
+A good POP document should expose important concepts, hide unnecessary implementation details, and make future modification easy.
 
 The output of this skill is a POP document.
 
 ---
 
-Core Principles
+Authoring Philosophy
 
-Intent over implementation
+When writing POP, think like a software architect rather than an implementor.
 
-POP specifications describe what a system means and what it should do.
+Focus on:
 
-They should not describe how the target language happens to implement those ideas unless the implementation mechanism is itself important.
+- concepts
+- behavior
+- relationships
+- assumptions
+- intent
 
-Prefer:
+Avoid thinking about:
 
-[type Change Tracker]
+- syntax
+- APIs
+- framework details
+- implementation mechanics
 
-An object that behaves like another object while recording Property Change values.
+unless those details materially affect the behavior of the system.
 
-Over:
+---
 
-[type Change Tracker]
+Authoring Process
 
-An object implemented using a JavaScript Proxy.
+When converting requirements into POP:
 
-Implementation details belong in the specification only when they materially affect behavior, performance, compatibility, security, or correctness.
+1. Identify Concepts
 
-Concepts over construction
+Identify the important ideas in the system.
 
-A POP document should describe concepts, not assembly instructions.
+Ask:
 
-Prefer:
+«What concepts exist regardless of implementation?»
 
-Render Todo Filter Controls.
+Many concepts should become Types.
 
-Over:
+Examples:
 
-Render three buttons.
-Render the selected button.
-Wire up click handlers.
+- User
+- Registration Request
+- Change Tracker
+- Todo Filter
+- Todo Filter Controls
 
-When a concept becomes important enough to discuss, name it and define it.
+Do not limit Types to target-language data structures.
 
-Complete units of intent
+---
 
-Functions should describe complete behavior.
+2. Identify Behavior
 
-Avoid creating entities that represent isolated implementation steps unless those steps have independent meaning within the domain.
+Identify the important behaviors in the system.
 
-Prefer:
+Ask:
 
-[function Validate Registration Request]
+«What reusable behavior does the system provide?»
 
-Over:
+Many behaviors should become Functions.
 
-[function Validate Email]
+Examples:
 
-[function Check Password Length]
+- Validate Registration Request
+- Create User
+- Sort Todos
+- Create Change Tracker
 
-[function Check Email Format]
+Functions should describe behavior rather than implementation.
 
-unless those concepts are independently meaningful and reusable.
+---
 
-Stability matters
+3. Identify Context
 
-A specification is stable when different competent implementors would produce substantially similar behavior.
+Identify assumptions that apply throughout the document.
 
-When writing POP, actively look for missing decisions.
+Ask:
+
+«Would this instruction need to be repeated many times?»
+
+If yes, it may belong in a Modifier.
+
+Examples:
+
+- Target output is TypeScript.
+- Use plain semantic HTML.
+- All file operations are asynchronous.
+
+---
+
+4. Improve Stability
+
+Look for important decisions that have not yet been made.
 
 Weak:
 
@@ -92,13 +120,70 @@ Stronger:
 
 Sort users by creation date descending.
 
-The purpose of POP is not to eliminate decisions.
+Important decisions belong to the author.
 
-The purpose of POP is to ensure the important decisions belong to the programmer.
+Unimportant decisions may be delegated to the compiler.
 
-Trust the compiler
+---
 
-Do not specify details simply because they exist.
+Concept Extraction
+
+One of the most important authoring techniques in POP is concept extraction.
+
+When a Function becomes difficult to describe, ask:
+
+«Is there a concept here that deserves a name?»
+
+For example:
+
+[function Todo List Component]
+
+Render filter buttons.
+
+Display the selected filter.
+
+Handle filter selection.
+
+may suggest:
+
+[type Todo Filter Controls]
+
+Naming a concept often improves:
+
+- clarity
+- stability
+- maintainability
+- reusability
+
+---
+
+Complete Ideas
+
+Entities should represent complete ideas.
+
+Avoid creating entities that describe tiny implementation steps.
+
+Prefer:
+
+[function Validate Registration Request]
+
+Over:
+
+[function Check Password Length]
+
+[function Check Email Format]
+
+unless those concepts are independently meaningful and reusable.
+
+A good rule of thumb:
+
+«Functions should do one thing well.»
+
+---
+
+Trust the Compiler
+
+Do not specify details merely because they exist.
 
 Many implementation decisions can safely be left to the compiler.
 
@@ -112,165 +197,101 @@ Use an h2 element.
 
 unless the heading level is important.
 
-A POP specification should communicate intent, not micromanage code generation.
+Author intent.
+
+Do not micromanage implementation.
 
 ---
 
-Using Types
+Security and External Dependencies
 
-Types describe concepts
+Security-sensitive behavior should include explicit assumptions.
 
-A POP Type is not necessarily a target-language type.
+Weak:
 
-Types describe structural intent.
+[function Hash Password]
 
-Examples include:
+Generate a secure password hash.
 
-- data structures
-- contracts
-- roles
-- state
-- styling hooks
-- behavioral concepts
-- UI concepts
-
-Valid examples:
-
-[type User]
-
-A registered user with an email address and creation date.
-
-[type Todo Filter Controls]
-
-A control group that displays one button for each Todo Filter value.
-
-[type Todo List CSS Classes]
-
-Use "todo-list" for the container.
-
-Use "todo-row" for todo rows.
-
-Use "completed" for completed rows.
-
-All of these are legitimate POP Types.
-
-Extract concepts when findings accumulate
-
-If a Function begins accumulating findings around a particular idea, consider extracting that idea into a Type.
-
-Example:
-
-Instead of repeatedly explaining filter buttons inside a component:
-
-[function Todo List Component]
-
-...
-
-create:
-
-[type Todo Filter Controls]
-
-...
-
-and reference it.
-
-This usually produces more stable and maintainable specifications.
-
----
-
-Using Functions
-
-Functions describe reusable behavior.
-
-A Function should answer:
-
-«What behavior does this concept provide?»
-
-Good examples:
-
-[function Sort Todos]
-
-Given an array of Todo values, return a new array sorted by creation date descending.
-
-[function Create Change Tracker]
-
-Create a Change Tracker around any object.
-
-Functions should focus on behavior rather than internal mechanics.
-
----
-
-Using Modifiers
-
-Modifiers provide document-wide context.
-
-Modifiers influence how all other entities should be understood.
-
-Examples:
+Stronger:
 
 [modifier]
 
-Target output is TypeScript.
+Target output is Node.js.
 
 [modifier]
 
-All file operations are asynchronous.
+Use the argon2 package for password hashing.
 
-[modifier]
+[function Hash Password]
 
-Use plain semantic HTML elements.
+Generate an Argon2id password hash from a plain text password.
 
-Avoid repeating the same instruction across multiple entities when a Modifier can communicate it once.
-
----
-
-Recognizing Missing Concepts
-
-Many unstable POP specifications are actually missing concepts.
-
-When a Function becomes long, repetitive, or difficult to describe, ask:
-
-«Is there a concept here that deserves a name?»
-
-If the answer is yes, introduce a Type and reference it.
-
-POP specifications generally improve when important ideas become named concepts.
+The compiler should not be forced to make security decisions.
 
 ---
 
-Intent and Realization
+Naming
 
-Different code does not necessarily indicate instability.
+Names are part of the specification.
 
-Different intent indicates instability.
+Names should accurately describe the ideas they represent.
 
-Avoid introducing implementation details solely to reduce compiler freedom.
+Prefer:
 
-Specify realization details only when they materially affect:
+[function Validate Registration Request]
 
-- behavior
-- safety
-- compatibility
-- accessibility
-- performance
-- external contracts
-- maintainability
+Over:
 
-Otherwise, allow the compiler to choose an appropriate implementation.
+[function Process User]
+
+A reader should understand the purpose of an entity from its name.
 
 ---
 
-Success Criteria
+Avoid Implementation Leakage
 
-A POP specification is successful when:
+Avoid describing:
 
-- Humans can understand it quickly.
-- Important concepts have names.
-- Important decisions are explicit.
-- Unimportant decisions are left to the compiler.
-- The compiler can generate code with few or no findings.
-- Different implementations preserve the same meaning.
+- framework APIs
+- helper functions
+- target-language syntax
+- implementation mechanics
 
-The purpose of POP is not to produce code.
+unless those details materially affect behavior.
 
-The purpose of POP is to communicate intent.
+Weak:
+
+Use a JavaScript Proxy.
+
+Stronger:
+
+Behave like another object while recording property changes.
+
+The implementation can be chosen later.
+
+---
+
+Successful POP Documents
+
+A successful POP document:
+
+- communicates intent clearly
+- names important concepts
+- contains complete ideas
+- makes important decisions explicit
+- hides unnecessary implementation details
+- is understandable by humans
+- can be implemented consistently
+
+When in doubt:
+
+Ask:
+
+«Am I describing the system?»
+
+Or:
+
+«Am I describing the code?»
+
+Prefer describing the system.
