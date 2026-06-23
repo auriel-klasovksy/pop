@@ -2,32 +2,34 @@
 
 Target output is TypeScript.
 
+Use TypeScript generics where appropriate.
+
 [type Property Change]
 
 A recorded change to an object's property value.
 
-It includes the property name, the previous value, and the new value.
+It includes the property name, previous value, and new value.
 
 [type Change Tracker]
 
-An object wrapped using Create Change Tracker.
+An object that behaves like another object while recording Property Change values.
 
-A Change Tracker behaves like the original object, but records Property Change values when its properties are changed.
+The recorded changes are available through its changes property.
 
 [function Create Change Tracker]
 
 Create a Change Tracker around any object.
 
-Use the JavaScript Proxy feature to intercept property writes.
+Record a Property Change whenever a property is assigned a value different from its current value.
 
-Record a Property Change whenever a property's new value is different from its previous value.
+Use the JavaScript Proxy feature.
 
 [function Example Change Tracking]
 
-Create a Change Tracker object with name set to "Ada" and role set to "developer".
+Create a Change Tracker with name set to "Ada" and role set to "developer".
 
 Change its role to "architect".
 
 Change its name to "Ada".
 
-Return the recorded Property Change values.
+Return its recorded Property Change values.
