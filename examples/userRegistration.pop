@@ -1,3 +1,11 @@
+[modifier]
+
+Target output is TypeScript.
+
+[modifier]
+
+This is a demonstration program. Do not implement production authentication or real password storage.
+
 [type Registration Request]
 
 A registration request containing an email address and password.
@@ -8,7 +16,7 @@ A registered user with an email address, password hash, creation date, and activ
 
 [function Validate Registration Request]
 
-Verify that the email address is syntactically valid.
+Verify that the email address is non-empty and contains an "@" symbol.
 
 Verify that the password contains at least twelve characters.
 
@@ -16,13 +24,13 @@ Return a descriptive validation error if either check fails.
 
 [function Hash Password]
 
-Generate a secure password hash from a plain text password.
+For this demonstration, return a deterministic placeholder password hash string derived from the plain text password.
 
-The original password must not appear in the returned value.
+The returned value must not equal the original password.
 
 [function Create User]
 
-Create and return a User from a validated Registration Request.
+Create and return a User from a valid Registration Request.
 
 Use Hash Password for password storage.
 
