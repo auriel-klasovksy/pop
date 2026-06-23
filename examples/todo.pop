@@ -37,14 +37,38 @@ The completed filter returns todos whose completion status is true.
 Given an array of Todo values, return a new array sorted by creation date descending.
 Do not mutate the original array.
 
+[type Todo List Props]
+
+The props for Todo List Component.
+
+It includes:
+- todos: an array of Todo values
+- selected filter: the currently selected Todo Filter
+- on filter change: a handler that receives the newly selected Todo Filter and returns nothing
+- on todo completion toggle: a handler that receives the todo id and the new completion status, and returns nothing
+
 [function Todo List Component]
 
-Render a React component that receives todos, selected filter, on filter change, and on todo completion toggle through props.
+Render a React component using Todo List Props.
+
 First Sort Todos, then Filter Todos.
+
 Render a heading with text "Todos".
+
 Render one filter button for each Todo Filter value.
+
+The selected filter button is the one whose Todo Filter value equals the selected filter prop.
+
+The selected filter button uses the selected CSS class.
+
+When a filter button is clicked, call on filter change with that button's Todo Filter value.
+
 Render one row per visible todo.
+
 Each row shows a checkbox bound to the todo completion status and a text label containing the todo title.
+
 Use Todo List CSS Classes for styling hooks.
+
 When a checkbox changes, call the completion toggle handler with the todo id and the new completion status.
+
 If no todos are visible, display "No todos to show."
