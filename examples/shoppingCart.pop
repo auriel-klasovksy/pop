@@ -1,0 +1,282 @@
+[modifier]
+
+Target output is TypeScript.
+
+[modifier]
+
+This is a library. Expose a clean public API. Do not assume a UI framework.
+
+[modifier]
+
+All monetary values are represented as integers in the smallest currency unit (e.g. cents).
+
+[modifier]
+
+Functions that can fail return a Cart Operation Result rather than throwing.
+
+[modifier]
+
+Cart Events are emitted synchronously before the mutating function returns.
+
+---
+
+[type Product]
+
+A purchasable item with a string identifier, name, unit price, and available stock quantity.
+
+---
+
+[type Product Catalog]
+
+A collection of Products representing current availability.
+
+A Product Catalog is the authoritative source of stock quantities at the time of a Cart operation.
+
+---
+
+[type Cart Item]
+
+A snapshot of Product data captured at the time the item was added to the Cart, together with the quantity the customer intends to purchase.
+
+A Cart Item stores the following fields from the Product at the time of addition:
+- identifier
+- name
+- unit price
+
+A Cart Item does not hold a live reference to a Product. Changes to the original Product after the item was added do not affect the Cart Item.
+
+---
+
+[type Cart Content]
+
+The pure data state of a shopping session at a point in time.
+
+Cart Content stores:
+- the Cart Items currently selected
+- any applied Discount
+
+Each Product may appear at most once in Cart Content, identified by its identifier.
+
+The following values are derived from the stored data and are not stored independently:
+- total item count: derived by summing all Cart Item quantities
+- subtotal: derived by summing each Cart Item's unit price multiplied by its quantity
+- final total: derived by applying the active Discount to the subtotal
+
+Cart Content does not store payment, shipping, or event listener information.
+
+---
+
+[type Cart]
+
+The stateful, interactive representation of a shopping session.
+
+A Cart owns:
+- a Cart Content value representing the current state of the session
+- a registry of event handlers subscribed to Cart Events
+
+A Cart is the primary object callers interact with. All mutation functions accept and return a Cart.
+
+---
+
+[type Discount]
+
+A reduction applied to a Cart subtotal.
+
+A Discount has a human-readable label and a value.
+
+Two Discount strategies are supported:
+
+- Percentage: reduces the subtotal by a percentage. The value is an integer representing the percentage (e.g. 10 = 10%). The resulting discount amount is rounded down to the nearest whole currency unit.
+- Fixed Amount: reduces the subtotal by a flat value in the smallest currency unit (e.g. cents).
+
+A Discount value must be greater than zero. Zero and negative values are invalid.
+
+Only one Discount may be active on a Cart at a time.
+
+A Percentage Discount is calculated against the subtotal.
+
+A Fixed Amount Discount is subtracted from the subtotal directly.
+
+A Discount cannot reduce the total below zero regardless of type.
+
+---
+
+[type Cart Totals]
+
+The computed financial summary of a Cart at a point in time.
+
+Contains:
+- total item count: the sum of all Cart Item quantities
+- subtotal: the sum of each Cart Item's unit price multiplied by its quantity, in the smallest currency unit
+- discount amount: the value deducted by the applied Discount, or zero if no Discount is applied
+- final total: the subtotal minus the discount amount, minimum zero
+
+When the Cart Content is empty, all values are zero.
+
+---
+
+[type Cart Operation Result]
+
+The outcome of a Cart mutation that may fail.
+
+Contains either:
+- a success indicator and the mutated Cart passed as input, or
+- a failure indicator and an error description.
+
+Cart mutations modify the Cart in place. The Cart returned on success is the same Cart instance that was passed in.
+
+---
+
+[type Cart Validation Result]
+
+The outcome of validating a Cart before checkout.
+
+Contains:
+- whether the Cart is valid
+- a list of validation errors as plain strings, each describing a specific problem
+
+Possible errors include:
+- Cart Content is empty
+- a Cart Item quantity exceeds available Product stock
+- a Cart Item has a quantity less than one
+- a Cart Item's Product identifier is not found in the Product Catalog
+
+---
+
+[type Cart Event]
+
+A notification emitted when the Cart changes.
+
+Cart Events include:
+- Item Added
+- Item Removed
+- Quantity Changed
+- Discount Applied
+- Discount Removed
+- Cart Cleared
+
+Every Cart Event carries the full Cart Content state at the time of emission.
+
+Item Added, Item Removed, and Quantity Changed events also carry the affected Cart Item.
+
+Discount Applied and Discount Removed events also carry the Discount they concern.
+
+Cart Cleared carries only the full Cart Content state. No Cart Item is attached since all items have been removed.
+
+---
+
+[type Cart Event Registry]
+
+A mutable collection of Cart Event handler functions associated with a Cart.
+
+Handlers can be added and removed individually.
+
+[function Create Cart]
+
+Create a new empty Cart for a shopping session.
+
+The Cart's initial Cart Content has no items and no Discount. The event handler registry is empty.
+
+---
+
+[function Add Item to Cart]
+
+Given a Cart and a Product, add one unit of that Product to the Cart Content.
+
+If the Product is already present in the Cart Content, increment its quantity by one. Product identity is matched by identifier.
+
+The stock check uses the live Product argument's available stock quantity. Do not allow the resulting quantity to exceed this value. Return a failure Cart Operation Result if this limit would be exceeded.
+
+On success, emit an Item Added Cart Event if this is the first unit of this Product, or a Quantity Changed Cart Event if the quantity was incremented. Return a success Cart Operation Result containing the mutated Cart.
+
+---
+
+[function Remove Item from Cart]
+
+Given a Cart and a Product, remove that Product from the Cart Content entirely regardless of quantity. Product identity is matched by identifier.
+
+If the Product is not present in the Cart Content, this operation has no effect and no event is emitted. Return a success Cart Operation Result.
+
+If the Product was present, emit an Item Removed Cart Event. Return a success Cart Operation Result containing the mutated Cart.
+
+---
+
+[function Update Item Quantity]
+
+Given a Cart, a Product, and a desired quantity, set the quantity of the matching Cart Item to that value. Product identity is matched by identifier against existing Cart Items.
+
+If the desired quantity is negative, return a failure Cart Operation Result with an appropriate description.
+
+If no Cart Item matches the given Product identifier, return a failure Cart Operation Result with an appropriate description.
+
+The stock check uses the live Product argument's available stock quantity. Do not allow the desired quantity to exceed this value. Return a failure Cart Operation Result if this limit would be exceeded.
+
+If the quantity is zero, remove the item from the Cart Content, emit an Item Removed Cart Event, and return a success Cart Operation Result containing the mutated Cart.
+
+If the quantity is greater than zero, emit a Quantity Changed Cart Event and return a success Cart Operation Result containing the mutated Cart.
+
+---
+
+[function Apply Discount]
+
+Given a Cart and a Discount, attach the Discount to the Cart Content.
+
+If the Discount value is zero or negative, return a failure Cart Operation Result with an appropriate description.
+
+If a Discount is already present, emit a Discount Removed Cart Event for the outgoing Discount before attaching the new one.
+
+Emit a Discount Applied Cart Event after the new Discount is attached.
+
+Return a success Cart Operation Result containing the mutated Cart.
+
+---
+
+[function Remove Discount]
+
+Given a Cart, remove any applied Discount from the Cart Content.
+
+If no Discount is present, this operation has no effect and no event is emitted. Return a success Cart Operation Result.
+
+If a Discount was present and has been removed, emit a Discount Removed Cart Event. Return a success Cart Operation Result containing the mutated Cart.
+
+---
+
+[function Calculate Cart Totals]
+
+Given a Cart, compute and return a Cart Totals value derived from the Cart's current Cart Content.
+
+This function always succeeds. It does not return a Cart Operation Result.
+
+---
+
+[function Validate Cart]
+
+Given a Cart and a Product Catalog, return a Cart Validation Result based on the Cart's current Cart Content.
+
+Validation rules:
+- The Cart Content must contain at least one Cart Item.
+- Every Cart Item quantity must be at least one.
+- Every Cart Item quantity must not exceed the current available stock of its Product in the Product Catalog. Products are matched by identifier.
+- Every Cart Item's Product identifier must exist in the Product Catalog. If an identifier is not found, treat it as a validation error.
+
+---
+
+[function Clear Cart]
+
+Remove all Cart Items and any applied Discount from the Cart Content.
+
+Emit a Cart Cleared Cart Event.
+
+Return a success Cart Operation Result containing the mutated Cart.
+
+---
+
+[function Subscribe to Cart Events]
+
+Given a Cart and a handler function, register the handler in the Cart's event handler registry to be called whenever a Cart Event is emitted.
+
+The handler receives a single Cart Event and returns nothing.
+
+Multiple handlers may be registered on the same Cart simultaneously.
+
+Each registration returns an independent unsubscribe function that removes only that handler from the registry when called.
